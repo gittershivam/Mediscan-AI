@@ -34,10 +34,11 @@ app.use(session({
     saveUninitialized: false,
     store: new MongoStore({ mongooseConnection: mongoose.connection }),
     cookie: { 
-        maxAge: 1000 * 60 * 60 * 24 * 7,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax'
-    }
+    maxAge: 1000 * 60 * 60 * 24 * 7,
+    secure: true,
+    sameSite: 'none',
+    httpOnly: true
+}
 }));
 
 // ===== PASSPORT =====
