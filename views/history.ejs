@@ -1,0 +1,98 @@
+<%- include("partials/header") %>
+<%- include("partials/navbar") %>
+
+<section style="min-height: 80vh; padding: 60px 5%; background: #f8fafc;">
+    <div style="max-width: 900px; margin: 0 auto;">
+
+        <!-- Header -->
+        <div style="margin-bottom: 40px;">
+            <h1 style="font-size: 32px; color: #1e293b; margin-bottom: 8px;">📋 Your Report History</h1>
+            <p style="color: #64748b; font-size: 16px;">Your last 10 analyzed reports — click any to expand</p>
+        </div>
+
+        <!-- Empty State -->
+        <% if (reports.length === 0) { %>
+            <div style="text-align: center; padding: 80px 20px; background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
+                <div style="font-size: 60px; margin-bottom: 20px;">📭</div>
+                <h3 style="color: #1e293b; margin-bottom: 10px;">No reports yet</h3>
+                <p style="color: #64748b; margin-bottom: 30px;">Upload your first medical report to get started</p>
+                <a href="/upload" style="background: #2563eb; color: white; padding: 12px 30px; border-radius: 10px; text-decoration: none; font-weight: 600;">
+                    Analyze a Report
+                </a>
+            </div>
+
+        <% } else { %>
+
+            <!-- Reports List -->
+            <% reports.forEach((report, index) => { %>
+                <div style="background: white; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; overflow: hidden; border: 1px solid #e5e7eb;">
+                    
+                    <!-- Report Header (Clickable) -->
+                    <div 
+                        onclick="toggleReport(<%= index %>)"
+                        style="padding: 20px 25px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.2s;"
+                        onmouseover="this.style.background='#f8fafc'"
+                        onmouseout="this.style.background='white'"
+                    >
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <!-- File Type Icon -->
+                            <div style="font-size: 28px;">
+                                <%= report.fileType === 'pdf' ? '📄' : '🖼️' %>
+                            </div>
+                            <div>
+                                <div style="font-weight: 600; color: #1e293b; margin-bottom: 4px;">
+                                    Report #<%= reports.length - index %>
+                                </div>
+                                <div style="font-size: 13px; color: #64748b;">
+                                    <%= report.createdAt.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }) %>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <!-- Mode Badge -->
+                            <span style="
+                                padding: 5px 12px;
+                                border-radius: 20px;
+                                font-size: 12px;
+                                font-weight: 600;
+                                background: <%= report.mode === 'simple' ? '#dcfce7' : '#dbeafe' %>;
+                                color: <%= report.mode === 'simple' ? '#166534' : '#1e40af' %>;
+                            ">
+                                <%= report.mode === 'simple' ? '👤 Patient Mode' : '🩺 Medical Mode' %>
+                            </span>
+
+                            <!-- Arrow -->
+                            <span id="arrow-<%= index %>" style="color: #94a3b8; font-size: 18px; transition: 0.3s;">▼</span>
+                        </div>
+                    </div>
+
+                    <!-- Report Content (Collapsible) -->
+                    <div id="report-<%= index %>" style="display: none; padding: 25px; border-top: 1px solid #f1f5f9;">
+                        <%- report.result %>
+                    </div>
+
+                </div>
+            <% }) %>
+
+        <% } %>
+
+    </div>
+</section>
+
+<script>
+    function toggleReport(index) {
+        const content = document.getElementById(`report-${index}`);
+        const arrow = document.getElementById(`arrow-${index}`);
+        
+        if (content.style.display === 'none') {
+            content.style.display = 'block';
+            arrow.style.transform = 'rotate(180deg)';
+        } else {
+            content.style.display = 'none';
+            arrow.style.transform = 'rotate(0deg)';
+        }
+    }
+</script>
+
+<%- include("partials/footer") %>

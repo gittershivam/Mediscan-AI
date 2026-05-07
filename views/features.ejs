@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Features | Mediscan AI</title>
+    <link rel="stylesheet" href="/css/home.css">
+    <link rel="stylesheet" href="/css/features.css">
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <%- include('partials/navbar') %>
+
+        <!-- PAGE HEADER -->
+        <section class="features-hero">
+            <div class="container">
+
+                <h1>Powerful Features Designed for Clarity</h1>
+
+                <p class="hero-subtitle">
+                    Advanced AI-driven tools that transform complex medical data
+                    into structured, meaningful understanding.
+                </p>
+            </div>
+        </section>
+
+
+        <!-- DUAL EXPLANATION MODE -->
+        <section class="dual-mode-section">
+
+            <div class="dual-header">
+                <h2>One Report. Two Perspectives.</h2>
+                <p>
+                    Mediscan AI adapts to your level of understanding —
+                    delivering clarity for patients and clinical depth for professionals.
+                </p>
+            </div>
+
+            <div class="dual-cards">
+
+                <!-- PATIENT MODE CARD -->
+                <div class="dual-card">
+
+                    <img src="/images/patient-mode.jpeg" alt="Patient Mode Preview">
+
+                    <div class="dual-content">
+                        <h3>Patient Mode</h3>
+                        <p class="dual-subtitle">
+                            Clear. Reassuring. Easy to Understand.
+                        </p>
+
+                        <ul>
+                            <li>Simple language explanations</li>
+                            <li>Context for abnormal values</li>
+                            <li>Calm, guidance-focused tone</li>
+                        </ul>
+                    </div>
+
+                </div>
+
+                <!-- MEDICAL MODE CARD -->
+                <div class="dual-card">
+
+                    <img src="/images/medical-mode.png" alt="Medical Mode Preview">
+
+                    <div class="dual-content">
+                        <h3>Medical Mode</h3>
+                        <p class="dual-subtitle">
+                            Detailed. Clinical. Insightful.
+                        </p>
+
+                        <ul>
+                            <li>Precise medical terminology</li>
+                            <li>Reference ranges & comparisons</li>
+                            <li>Educational and professional depth</li>
+                        </ul>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- DOCTOR CONSULTATION INDICATOR -->
+        <section class="consultation-section">
+
+            <div class="consultation-container">
+
+                <h2>Smart Consultation Guidance</h2>
+
+                <p class="consultation-intro">
+                    Mediscan AI evaluates report findings and provides structured
+                    guidance on whether monitoring, lifestyle adjustments,
+                    or medical consultation may be appropriate.
+                </p>
+
+                <div class="consultation-levels">
+
+                    <div class="consult-card level-green">
+                        <div class="indicator-dot"></div>
+                        <h3>No Immediate Concern</h3>
+                        <p>
+                            Results are within acceptable ranges.
+                            Routine monitoring and healthy habits are recommended.
+                        </p>
+                    </div>
+
+                    <div class="consult-card level-yellow">
+                        <div class="indicator-dot"></div>
+                        <h3>Monitor & Take Preventive Action</h3>
+                        <p>
+                            Mild deviations detected. Lifestyle adjustments
+                            or follow-up testing may be advisable.
+                        </p>
+                    </div>
+
+                    <div class="consult-card level-red">
+                        <div class="indicator-dot"></div>
+                        <h3>Consult a Healthcare Professional</h3>
+                        <p>
+                            Significant abnormalities identified.
+                            A professional medical consultation is recommended.
+                        </p>
+                    </div>
+
+                </div>
+
+                <p class="consultation-note">
+                    This system provides educational guidance only and does not replace
+                    professional medical advice, diagnosis, or treatment.
+                </p>
+
+            </div>
+
+        </section>
+
+        <!-- SMART SUMMARY SECTION -->
+        <section class="summary-section">
+
+            <div class="summary-container">
+
+                <h2 class="summary-title">Smart Clinical Summary</h2>
+
+                <p class="summary-intro">
+                    A concise, AI-generated overview that highlights key findings,
+                    risk levels, and recommended next steps — structured for clarity
+                    and easy discussion with family or healthcare professionals.
+                </p>
+
+                <!-- SAMPLE SUMMARY CARD -->
+                <div class="summary-card">
+
+                    <div class="summary-header">
+                        <h3>Medical Report Summary</h3>
+                        <span class="summary-status">Moderate Attention Advised</span>
+                    </div>
+
+                    <div class="summary-body">
+
+                        <div class="summary-block">
+                            <h4>Key Findings</h4>
+                            <ul>
+                                <li>Hemoglobin slightly below reference range</li>
+                                <li>Cholesterol level mildly elevated</li>
+                                <li>Blood sugar within normal limits</li>
+                            </ul>
+                        </div>
+
+                        <div class="summary-block">
+                            <h4>Risk Assessment</h4>
+                            <p>
+                                Some values indicate mild deviation from
+                                optimal ranges. No immediate emergency,
+                                but monitoring is recommended.
+                            </p>
+                        </div>
+
+                        <div class="summary-block">
+                            <h4>Suggested Next Steps</h4>
+                            <ul>
+                                <li>Consider dietary adjustments</li>
+                                <li>Repeat cholesterol test in 3 months</li>
+                                <li>Consult physician if symptoms persist</li>
+                            </ul>
+                        </div>
+
+                    </div>
+
+                    <div class="summary-footer">
+                        Educational guidance only. Not a medical diagnosis.
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- VOICE SUPPORT -->
+        <section class="feature-section voice-lang">
+            <div class="container">
+
+                <h2 class="section-title">Accessibility & Language Support</h2>
+                <p class="section-subtitle">
+                    Designed to make medical insights easy to understand — for everyone.
+                </p>
+
+                <div class="voice-grid">
+
+                    <!-- Audio Playback Card -->
+                    <div class="voice-card">
+                        <div class="voice-icon">🔊</div>
+                        <h3>Listen to Your Medical Report</h3>
+                        <p>
+                            After your symptoms are analyzed, you can tap the
+                            <strong>“Hear Report”</strong> button to listen to your
+                            medical summary instead of reading it.
+                        </p>
+
+                        <ul>
+                            <li>Text-to-speech powered output</li>
+                            <li>Helpful for elderly users</li>
+                            <li>Improves accessibility & ease of use</li>
+                        </ul>
+                    </div>
+
+                    <!-- Language Support Card -->
+                    <div class="voice-card">
+                        <div class="voice-icon">🌍</div>
+                        <h3>Indian Regional Language Support</h3>
+                        <p>
+                            Receive explanations in your preferred language.
+                            Mediscan AI makes healthcare clarity accessible beyond English.
+                        </p>
+
+                        <ul>
+                            <li>Hindi, Tamil, Telugu & more</li>
+                            <li>Simple everyday vocabulary</li>
+                            <li>Localized medical explanations</li>
+                        </ul>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+
+
+</body>
+
+</html>
+
+
+<%- include("partials/footer") %>
+

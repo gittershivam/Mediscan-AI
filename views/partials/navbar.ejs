@@ -1,0 +1,41 @@
+<nav class="navbar">
+    <div class="logo">MediScan AI</div>
+
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <ul class="nav-links" id="navLinks">
+        <li><a href="/">Home</a></li>
+        <li><a href="/features">Features</a></li>
+        <li><a href="/aboutUs">About Us</a></li>
+
+        <% if (user) { %>
+            <li><a href="/history">📋 History</a></li>
+            <li><a href="/upload" class="nav-btn">Upload</a></li>
+            <li><a href="/auth/logout" style="color: #ef4444; font-weight: 600;">Logout</a></li>
+        <% } else { %>
+            <li><a href="/auth/login">Login</a></li>
+            <li><a href="/auth/signup" class="nav-btn">Sign Up</a></li>
+        <% } %>
+    </ul>
+</nav>
+
+<script>
+    const hamburger = document.getElementById('hamburger');
+    const navLinks = document.getElementById('navLinks');
+
+    hamburger.addEventListener('click', () => {
+        hamburger.classList.toggle('open');
+        navLinks.classList.toggle('open');
+    });
+
+    navLinks.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+            hamburger.classList.remove('open');
+            navLinks.classList.remove('open');
+        });
+    });
+</script>

@@ -1,0 +1,454 @@
+<%- include("partials/header") %>
+    <%- include("partials/navbar") %>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+        <section class="upload-hero">
+            <div class="container">
+                <h1>Upload Your Medical Report</h1>
+                <p>Securely upload your diagnostic report and receive structured AI-powered insights within seconds.</p>
+            </div>
+        </section>
+
+        <section class="upload-section">
+            <div class="container">
+                <div class="upload-card">
+                    <form id="analyzeForm" enctype="multipart/form-data">
+
+                        <div class="upload-box" id="uploadBox">
+                            <input type="file" name="report" id="fileInput" hidden required
+                                accept=".pdf, .jpg, .png, .jpeg">
+                            <div class="upload-content">
+                                <div class="upload-icon">📄</div>
+                                <p><strong>Click to upload</strong> or drag and drop</p>
+                                <span>PDF, JPG, PNG (Max 5MB)</span>
+                                <div id="fileName" class="file-name"></div>
+                                <div class="success-check" id="successCheck">✓ File Uploaded Successfully</div>
+                            </div>
+                        </div>
+
+                        <div id="analysisSection" style="display:none; margin-top:20px;">
+                            <h3>Choose Explanation Mode</h3>
+
+                            <button id="simpleBtn" class="mode-btn">Simple Explanation</button>
+                            <button id="proBtn" class="mode-btn">Professional Explanation</button>
+
+                            <div id="loading" style="display:none; margin-top:15px;">
+                                <div class="spinner"></div>
+                                Analyzing report... ⏳
+                            </div>
+
+                            <div id="output" style="margin-top: 20px;"></div>
+
+                            <div class="action-buttons" id="actionButtons" style="display: none;">
+
+                                <button id="downloadBtn" class="download-btn">
+                                    ⬇ Download Summary PDF
+                                </button>
+
+                                <button id="ttsBtn" class="tts-button">
+                                    🔊 Listen to Report
+                                </button>
+                            </div>
+
+                            <!-- AFTER -->
+                            <div id="translationSection" class="translation-section" style="display:none;">
+                                <label class="translation-label">Change Language:</label>
+                                <div class="translation-row">
+                                    <select id="languageSelect" class="language-select">
+                                        <option value="English">English</option>
+                                        <option value="Hindi">Hindi</option>
+                                        <option value="Marathi">Marathi</option>
+                                        <option value="Gujarati">Gujarati</option>
+                                        <option value="Tamil">Tamil</option>
+                                    </select>
+                                    <button id="translateBtn" class="translate-btn">Translate</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- CHAT SECTION -->
+                        <!-- AFTER -->
+                        <div id="chatSection" class="chat-section" style="display:none;">
+                            <h3>💬 Ask a Follow-up Question</h3>
+                            <div id="chatWindow" class="chat-window">
+                                <div class="chat-placeholder">
+                                    Ask anything about your report or general health questions 👇
+                                </div>
+                            </div>
+                            <div class="chat-input-row">
+                                <input type="text" id="chatInput" class="chat-input"
+                                    placeholder="e.g. What does high creatinine mean?" />
+                                <button id="chatSendBtn" class="chat-send-btn">Send</button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="upload-note">
+                        <p>🔒 Your file is processed securely and not permanently stored.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <script>
+            // --- DOM Elements ---
+            const uploadBox = document.getElementById('uploadBox');
+            const fileInput = document.getElementById('fileInput');
+            const fileNameDisplay = document.getElementById('fileName');
+            const successCheck = document.getElementById('successCheck');
+            const analysisSection = document.getElementById('analysisSection');
+            const simpleBtn = document.getElementById('simpleBtn');
+            const proBtn = document.getElementById('proBtn');
+            const loading = document.getElementById('loading');
+            const output = document.getElementById('output');
+
+            // Action Elements
+            const actionButtons = document.getElementById('actionButtons');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const ttsBtn = document.getElementById('ttsBtn');
+
+            // Translation Elements
+            const translationSection = document.getElementById('translationSection');
+            const translateBtn = document.getElementById('translateBtn');
+            const languageSelect = document.getElementById('languageSelect');
+
+            // Speech Synthesis Variables
+            let synth = window.speechSynthesis;
+            let isSpeaking = false;
+
+            // Chat Elements
+            const chatSection = document.getElementById('chatSection');
+            const chatWindow = document.getElementById('chatWindow');
+            const chatInput = document.getElementById('chatInput');
+            const chatSendBtn = document.getElementById('chatSendBtn');
+
+            // Chat State
+            let chatHistory = [];
+            let reportContext = "";
+            // --- 1. Upload Logic ---
+            uploadBox.addEventListener('click', () => fileInput.click());
+
+            fileInput.addEventListener('change', () => {
+                if (fileInput.files.length > 0) {
+                    console.log("File selected:", fileInput.files[0].name);
+                    fileNameDisplay.textContent = `Selected: ${fileInput.files[0].name}`;
+                    successCheck.classList.add('show');
+                    analysisSection.style.display = "block";
+
+                    // Reset state if they upload a new file
+                    output.innerHTML = "";
+                    actionButtons.style.display = "none";
+                    translationSection.style.display = "none";
+                    if (isSpeaking) synth.cancel();
+                }
+            });
+
+            // --- 2. Analysis Logic ---
+            simpleBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                analyzeReport("simple");
+            });
+
+            proBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                analyzeReport("professional");
+            });
+
+            async function analyzeReport(mode) {
+                if (!fileInput.files[0]) return;
+
+                const formData = new FormData();
+                formData.append("report", fileInput.files[0]);
+                formData.append("mode", mode);
+
+                loading.style.display = "block";
+                output.innerHTML = "";
+                actionButtons.style.display = "none";
+                translationSection.style.display = "none";
+                chatSection.style.display = "none";        // NEW: hide chat on new analysis
+                chatHistory = [];                           // NEW: reset chat history
+                reportContext = "";                         // NEW: reset report context
+                // AFTER
+                chatWindow.innerHTML = '<div class="chat-placeholder">Ask anything about your report or general health questions 👇</div>';
+                if (isSpeaking) synth.cancel();
+
+                try {
+                    const response = await fetch('/analyze', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const data = await response.json();
+                    loading.style.display = "none";
+
+                    if (data.success) {
+                        // Wrap result in a div with explicit styles to guarantee PDF captures it properly
+                        output.innerHTML = `<div class="result-box" style="padding: 20px; background-color: #ffffff; color: #000000; text-align: left;">${data.result}</div>`;
+
+                        // Show action buttons
+                        actionButtons.style.display = "flex";
+                        translationSection.style.display = "block";
+                        chatSection.style.display = "block";
+                        reportContext = data.result;
+                    } else {
+                        output.innerHTML = `<p style="color:red;">Error: ${data.message}</p>`;
+                    }
+                } catch (error) {
+                    loading.style.display = "none";
+                    console.error(error);
+                    output.innerHTML = `<p style="color:red;">An error occurred during analysis.</p>`;
+                }
+            }
+
+            // --- 3. FIXED: PDF Download Logic ---
+            downloadBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+
+                const element = document.querySelector('.result-box');
+                if (!element) {
+                    alert("No analysis found to download!");
+                    return;
+                }
+
+                // Open a new window with just the report content
+                const printWindow = window.open('', '_blank');
+                printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>MediScan AI - Report Summary</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    padding: 40px;
+                    color: #000;
+                    font-size: 14px;
+                    line-height: 1.7;
+                }
+                h2 { color: #1e40af; margin-bottom: 20px; }
+                h3 { color: #1e40af; border-bottom: 2px solid #bfdbfe; padding-bottom: 4px; }
+                ul { padding-left: 20px; }
+                li { margin-bottom: 8px; }
+                .status-green { background: #ecfdf5; color: #065f46; padding: 12px; border-radius: 8px; }
+                .status-yellow { background: #fffbeb; color: #92400e; padding: 12px; border-radius: 8px; }
+                .status-red { background: #fef2f2; color: #991b1b; padding: 12px; border-radius: 8px; }
+            </style>
+        </head>
+        <body>
+            <h2>MediScan AI — Report Summary</h2>
+            ${element.innerHTML}
+        </body>
+        </html>
+    `);
+
+                printWindow.document.close();
+
+                // Wait for content to load then print
+                printWindow.onload = () => {
+                    printWindow.focus();
+                    printWindow.print();
+                    printWindow.close();
+                };
+            });
+
+            // --- 4. NEW: Text-to-Speech (TTS) Logic ---
+            ttsBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+
+                if (isSpeaking) {
+                    synth.cancel();
+                    isSpeaking = false;
+                    ttsBtn.innerHTML = '🔊 Listen to Report';
+                    ttsBtn.classList.remove('playing');
+                    return;
+                }
+
+                const contentDiv = document.querySelector('.result-box');
+                if (!contentDiv) return;
+
+                const textToRead = contentDiv.innerText;
+                const utterance = new SpeechSynthesisUtterance(textToRead);
+
+                // 1. Map your dropdown values to official browser language codes
+                const langMap = {
+                    'English': 'en-IN', // English (India)
+                    'Hindi': 'hi-IN',   // Hindi (India)
+                    'Marathi': 'mr-IN', // Marathi (India)
+                    'Gujarati': 'gu-IN',// Gujarati (India)
+                    'Tamil': 'ta-IN'    // Tamil (India)
+                };
+
+                // 2. Get the currently selected language from the dropdown
+                const currentLangSelection = languageSelect.value;
+
+                // 3. Set the spoken language (defaults to English if something goes wrong)
+                utterance.lang = langMap[currentLangSelection] || 'en-IN';
+
+                utterance.rate = 0.85; // Slightly slower for better regional pronunciation
+
+                utterance.onstart = () => {
+                    isSpeaking = true;
+                    ttsBtn.innerHTML = '🛑 Stop Reading';
+                    ttsBtn.classList.add('playing');
+                };
+
+                utterance.onend = () => {
+                    isSpeaking = false;
+                    ttsBtn.innerHTML = '🔊 Listen to Report';
+                    ttsBtn.classList.remove('playing');
+                };
+
+                utterance.onerror = () => {
+                    isSpeaking = false;
+                    ttsBtn.innerHTML = '🔊 Listen to Report';
+                    ttsBtn.classList.remove('playing');
+                };
+
+                synth.speak(utterance);
+            });
+
+            // --- 5. Translation Logic ---
+            translateBtn.addEventListener('click', async (e) => {
+                e.preventDefault();
+
+                const currentText = document.querySelector('.result-box').innerHTML;
+                const targetLang = languageSelect.value;
+                const originalBtnText = translateBtn.innerText;
+
+                // UI Updates
+                translateBtn.innerText = "Translating...";
+                translateBtn.disabled = true;
+                output.style.opacity = "0.6";
+                if (isSpeaking) synth.cancel(); // Stop talking if they change language
+
+                try {
+                    const response = await fetch('/translate', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            text: currentText,
+                            language: targetLang
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        document.querySelector('.result-box').innerHTML = data.result;
+                    } else {
+                        alert("Translation failed. Please try again.");
+                    }
+
+                } catch (error) {
+                    console.error(error);
+                    alert("Error connecting to translation service.");
+                } finally {
+                    translateBtn.innerText = originalBtnText;
+                    translateBtn.disabled = false;
+                    output.style.opacity = "1";
+                }
+            });
+
+
+
+            // Helper: Add a message bubble to chat window
+            function addMessage(role, html) {
+                const isUser = role === "user";
+                const bubble = document.createElement('div');
+                bubble.style.cssText = `
+        max-width: 80%;
+        padding: 12px 16px;
+        border-radius: 14px;
+        font-size: 14px;
+        line-height: 1.6;
+        align-self: ${isUser ? 'flex-end' : 'flex-start'};
+        background: ${isUser ? '#2563eb' : '#ffffff'};
+        color: ${isUser ? '#ffffff' : '#1f2937'};
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        border: ${isUser ? 'none' : '1px solid #e5e7eb'};
+    `;
+                bubble.innerHTML = isUser ? `<p style="margin:0">${html}</p>` : html;
+                chatWindow.appendChild(bubble);
+                chatWindow.scrollTop = chatWindow.scrollHeight;
+            }
+
+            // Helper: Show typing indicator
+            function showTyping() {
+                const typing = document.createElement('div');
+                typing.id = 'typingIndicator';
+                typing.style.cssText = `
+        align-self: flex-start;
+        padding: 10px 16px;
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        font-size: 14px;
+        color: #9ca3af;
+    `;
+                typing.innerHTML = '🤖 Thinking...';
+                chatWindow.appendChild(typing);
+                chatWindow.scrollTop = chatWindow.scrollHeight;
+            }
+
+            function removeTyping() {
+                const typing = document.getElementById('typingIndicator');
+                if (typing) typing.remove();
+            }
+
+            // Send message function
+            async function sendChatMessage() {
+                const message = chatInput.value.trim();
+                if (!message) return;
+
+                // Add user bubble
+                addMessage('user', message);
+                chatInput.value = '';
+                chatSendBtn.disabled = true;
+                showTyping();
+
+                // Add to history
+                chatHistory.push({ role: 'user', text: message });
+
+                try {
+                    const response = await fetch('/chat', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            reportContext: reportContext,
+                            chatHistory: chatHistory.slice(0, -1), // exclude latest, already sent
+                            userMessage: message
+                        })
+                    });
+
+                    const data = await response.json();
+                    removeTyping();
+
+                    if (data.success) {
+                        addMessage('model', data.reply);
+                        chatHistory.push({ role: 'model', text: data.reply });
+                    } else {
+                        addMessage('model', '<p>Sorry, something went wrong. Please try again.</p>');
+                    }
+
+                } catch (error) {
+                    removeTyping();
+                    addMessage('model', '<p>Connection error. Please try again.</p>');
+                }
+
+                chatSendBtn.disabled = false;
+            }
+
+            // Event listeners for chat
+            chatSendBtn.addEventListener('click', sendChatMessage);
+            chatInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') sendChatMessage();
+            });
+
+            // Show chat section after analysis and store report context
+            // Find your existing line: actionButtons.style.display = "flex";
+            // Add these two lines RIGHT AFTER it:
+
+        </script>
+
+        <%- include("partials/footer") %>

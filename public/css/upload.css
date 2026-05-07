@@ -1,0 +1,490 @@
+/* =========================================
+   1. HERO SECTION 
+   ========================================= */
+.upload-hero {
+    padding: 90px 0;
+    background: linear-gradient(135deg, #eef5ff, #f8fbff);
+    text-align: center;
+}
+
+.upload-hero h1 {
+    font-size: 40px;
+    margin-bottom: 15px;
+    color: #1f2937;
+}
+
+.upload-hero p {
+    max-width: 700px;
+    margin: 0 auto;
+    font-size: 18px;
+    color: #4b5563;
+}
+
+/* =========================================
+   2. UPLOAD CARD & BOX 
+   ========================================= */
+.upload-section {
+    padding: 80px 0;
+}
+
+.upload-card {
+    max-width: 700px; 
+    margin: 0 auto;
+    background: white;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.06);
+    text-align: center;
+}
+
+.upload-box {
+    border: 2px dashed #cbd5e1;
+    border-radius: 14px;
+    padding: 50px 20px;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.upload-box:hover, .upload-box.drag-active {
+    border-color: #2563eb;
+    background: #f8fbff;
+    transform: scale(1.02);
+}
+
+.upload-icon {
+    font-size: 40px;
+    margin-bottom: 15px;
+}
+
+.upload-box p {
+    margin-bottom: 5px;
+}
+
+.upload-box span {
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.file-name {
+    margin-top: 12px;
+    font-size: 14px;
+    color: #2563eb;
+    font-weight: 500;
+}
+
+/* Success Check Animation */
+.success-check {
+    margin-top: 15px;
+    padding: 10px 15px;
+    background: #ecfdf5;
+    color: #059669;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: all 0.3s ease;
+}
+
+.success-check.show {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.upload-note {
+    margin-top: 20px;
+    font-size: 13px;
+    color: #9ca3af;
+}
+
+/* =========================================
+   3. NEW STYLES (For Analysis, Buttons, AI Results)
+   ========================================= */
+
+/* Mode Selection Buttons */
+.mode-btn {
+    display: block;
+    width: 100%;
+    margin-bottom: 15px;
+    padding: 16px 20px;
+    border: 2px solid #e5e7eb;
+    background: white;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #374151;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+}
+
+#simpleBtn:hover {
+    border-color: #10b981; 
+    background: #ecfdf5;
+    color: #047857;
+}
+
+#proBtn:hover {
+    border-color: #3b82f6; 
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+/* Loading Spinner */
+#loading {
+    color: #6b7280;
+    font-weight: 500;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #2563eb; 
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 20px auto 10px auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* AI Result Box Styling */
+.result-box {
+    background: #f9fafb; 
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 30px;
+    margin-top: 25px;
+    text-align: left; 
+    font-family: system-ui, -apple-system, sans-serif;
+    line-height: 1.7;
+    color: #334155;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.result-box h3 {
+    color: #1e40af; 
+    margin-top: 25px;
+    margin-bottom: 10px;
+    font-size: 1.25rem;
+    border-bottom: 2px solid #bfdbfe;
+    display: inline-block;
+    padding-bottom: 4px;
+}
+
+.result-box h3:first-child {
+    margin-top: 0; 
+}
+
+.result-box ul {
+    list-style-type: disc;
+    padding-left: 20px;
+    margin-bottom: 20px;
+}
+
+.result-box li {
+    margin-bottom: 8px;
+}
+
+.result-box strong {
+    color: #0f172a;
+    font-weight: 700;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+
+/* =========================================
+   4. ACTION BUTTONS (Download & TTS)
+   ========================================= */
+
+.action-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+/* Download Button */
+.download-btn {
+    flex: 1; /* Makes both buttons equal width */
+    padding: 15px;
+    background-color: #059669; 
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 0.8s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.download-btn:hover {
+    background-color: #047857; 
+    transform: translateY(-2px);
+}
+
+.download-btn:active {
+    transform: translateY(0);
+}
+
+/* Text-to-Speech Button */
+.tts-button {
+    flex: 1; /* Makes both buttons equal width */
+    padding: 15px;
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 0.8s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.tts-button:hover {
+    background-color: #1d4ed8;
+    transform: translateY(-2px);
+}
+
+.tts-button:active {
+    transform: translateY(0);
+}
+
+.tts-button.playing {
+    background-color: #ef4444; /* Turns red when playing */
+}
+
+
+/* =========================================
+   5. SMART CONSULTATION GUIDANCE STYLES
+   ========================================= */
+.status-green, .status-yellow, .status-red {
+    display: block;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 25px;
+    font-size: 1.25rem;
+    font-weight: 700;
+    text-align: center;
+    border: 2px solid;
+}
+
+.status-green {
+    background-color: #ecfdf5;
+    color: #065f46;
+    border-color: #10b981;
+}
+
+.status-yellow {
+    background-color: #fffbeb;
+    color: #92400e;
+    border-color: #fbbf24;
+}
+
+.status-red {
+    background-color: #fef2f2;
+    color: #991b1b;
+    border-color: #ef4444;
+}
+
+
+@media print {
+    .status-green { background-color: #ecfdf5 !important; -webkit-print-color-adjust: exact; }
+    .status-yellow { background-color: #fffbeb !important; -webkit-print-color-adjust: exact; }
+    .status-red { background-color: #fef2f2 !important; -webkit-print-color-adjust: exact; }
+}
+
+
+/* =========================================
+   6. CHAT SECTION
+   ========================================= */
+
+.chat-section {
+    margin-top: 30px;
+    padding-top: 25px;
+    border-top: 1px solid #eee;
+}
+
+.chat-section h3 {
+    margin-bottom: 15px;
+    color: #1e293b;
+}
+
+.chat-window {
+    height: 300px;
+    overflow-y: auto;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 15px;
+    background: #f9fafb;
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.chat-placeholder {
+    text-align: center;
+    color: #9ca3af;
+    font-size: 14px;
+}
+
+.chat-input-row {
+    display: flex;
+    gap: 10px;
+}
+
+.chat-input {
+    flex: 1;
+    padding: 12px 16px;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    font-size: 15px;
+    outline: none;
+}
+
+.chat-send-btn {
+    padding: 12px 22px;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.chat-send-btn:hover {
+    background: #1d4ed8;
+}
+
+/* Translation Section */
+.translation-section {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.translation-label {
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.translation-row {
+    display: flex;
+    gap: 10px;
+}
+
+.language-select {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    flex: 1;
+}
+
+.translate-btn {
+    padding: 10px 20px;
+    background: #6366f1;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.translate-btn:hover {
+    background: #4f46e5;
+}
+
+/* ================= MOBILE RESPONSIVE ================= */
+
+@media (max-width: 768px) {
+
+    /* Hero */
+    .upload-hero {
+        padding: 50px 5%;
+    }
+
+    .upload-hero h1 {
+        font-size: 28px;
+    }
+
+    .upload-hero p {
+        font-size: 16px;
+    }
+
+    /* Upload Card */
+    .upload-section {
+        padding: 40px 5%;
+    }
+
+    .upload-card {
+        padding: 25px 20px;
+    }
+
+    .upload-box {
+        padding: 35px 15px;
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+        flex-direction: column;
+    }
+
+    .download-btn,
+    .tts-button {
+        width: 100%;
+    }
+
+    /* Translation Row */
+    .translation-row {
+        flex-direction: column;
+    }
+
+    .translate-btn {
+        width: 100%;
+        padding: 12px;
+    }
+
+    /* Chat */
+    .chat-window {
+        height: 250px;
+    }
+
+    .chat-input-row {
+        flex-direction: column;
+    }
+
+    .chat-send-btn {
+        width: 100%;
+        padding: 12px;
+    }
+
+    /* Mode Buttons */
+    .mode-btn {
+        font-size: 14px;
+        padding: 14px 15px;
+    }
+}
