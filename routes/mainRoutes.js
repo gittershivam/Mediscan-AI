@@ -40,7 +40,7 @@ router.get('/debug-auth', (req, res) => {
     });
 });
 
-router.post('/analyze', ensureAuthenticated, upload.single('report'), async (req, res) => {
+router.post('/analyze', upload.single('report'), async (req, res) => {
     try {
         const mode = req.body.mode;
         const filePath = req.file.path;
