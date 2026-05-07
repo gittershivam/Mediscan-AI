@@ -31,6 +31,14 @@ router.get("/upload", ensureAuthenticated, (req, res) => {
     res.render("upload");
 });
 
+router.get('/debug-auth', (req, res) => {
+    res.json({
+        isAuthenticated: req.isAuthenticated(),
+        user: req.user ? req.user.email : null,
+        sessionID: req.sessionID,
+        session: req.session
+    });
+});
 
 router.post('/analyze', ensureAuthenticated, upload.single('report'), async (req, res) => {
     try {
@@ -123,5 +131,6 @@ router.get("/history", ensureAuthenticated, async (req, res) => {
         res.redirect("/");
     }
 });
+
 
 module.exports = router;
