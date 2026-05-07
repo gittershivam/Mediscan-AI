@@ -4,7 +4,9 @@ const mongoose = require("mongoose");
 const session = require("express-session");
 const MongoStore = require("connect-mongo")(session);
 const passport = require("passport");
-require("dotenv").config();
+if (process.env.NODE_ENV !== 'production') {
+    require("dotenv").config();
+}
 
 const app = express();
 
