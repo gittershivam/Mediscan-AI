@@ -1,0 +1,200 @@
+<%- include("partials/header") %>
+<%- include("partials/navbar") %>
+
+<link rel="stylesheet" href="/css/dashboard.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<section class="dashboard-page">
+    <div class="dashboard-container">
+
+        <!-- Welcome Header -->
+        <div class="dashboard-header">
+            <div>
+                <h1 class="dashboard-title">👋 Welcome back, <%= user.name.split(' ')[0] %>!</h1>
+                <p class="dashboard-subtitle">Here's your personal health report analytics</p>
+            </div>
+            <a href="/upload" class="dashboard-upload-btn">+ New Analysis</a>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="dashboard-stats">
+            <div class="dash-stat-card">
+                <div class="dash-stat-icon">📄</div>
+                <div class="dash-stat-number"><%= totalReports %></div>
+                <div class="dash-stat-label">Total Reports</div>
+            </div>
+            <div class="dash-stat-card">
+                <div class="dash-stat-icon">📅</div>
+                <div class="dash-stat-number"><%= thisMonthReports %></div>
+                <div class="dash-stat-label">This Month</div>
+            </div>
+            <div class="dash-stat-card">
+                <div class="dash-stat-icon">🟢</div>
+                <div class="dash-stat-number"><%= greenCount %></div>
+                <div class="dash-stat-label">Normal Results</div>
+            </div>
+            <div class="dash-stat-card">
+                <div class="dash-stat-icon">🔴</div>
+                <div class="dash-stat-number"><%= redCount %></div>
+                <div class="dash-stat-label">Needs Attention</div>
+            </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="dashboard-charts">
+
+            <!-- Bar Chart -->
+            <div class="chart-card">
+                <h3 class="chart-title">📈 Report Activity (Last 6 Months)</h3>
+                <canvas id="activityChart"></canvas>
+            </div>
+
+            <!-- Doughnut Chart -->
+            <div class="chart-card">
+                <h3 class="chart-title">🥧 Risk Level Distribution</h3>
+                <% if (totalReports === 0) { %>
+                    <div class="no-data">No reports yet</div>
+                <% } else { %>
+                    <canvas id="riskChart"></canvas>
+                    <div class="risk-legend">
+                        <div class="legend-item">
+                            <div class="legend-dot green"></div>
+                            <span>Normal (<%= greenCount %>)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-dot yellow"></div>
+                            <span>Monitor (<%= yellowCount %>)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-dot red"></div>
+                            <span>Consult Doctor (<%= redCount %>)</span>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+
+        </div>
+
+        <!-- Mode Breakdown -->
+        <div class="mode-breakdown">
+            <h3 class="chart-title">🎯 Analysis Mode Usage</h3>
+            <div class="mode-bars">
+                <div class="mode-bar-item">
+                    <div class="mode-bar-info">
+                        <span>👤 Patient Mode</span>
+                        <span class="mode-bar-count green-text"><%= simpleModeCount %></span>
+                    </div>
+                    <div class="bar-track">
+                        <div class="bar-fill green" style="width: <%= totalReports > 0 ? (simpleModeCount / totalReports * 100) : 0 %>%;"></div>
+                    </div>
+                </div>
+                <div class="mode-bar-item">
+                    <div class="mode-bar-info">
+                        <span>🩺 Medical Mode</span>
+                        <span class="mode-bar-count blue-text"><%= proModeCount %></span>
+                    </div>
+                    <div class="bar-track">
+                        <div class="bar-fill blue" style="width: <%= totalReports > 0 ? (proModeCount / totalReports * 100) : 0 %>%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Reports -->
+        <div class="recent-reports">
+            <div class="recent-header">
+                <h3 class="chart-title">📋 Recent Reports</h3>
+                <a href="/history" class="view-all-btn">View All →</a>
+            </div>
+
+            <% if (recentReports.length === 0) { %>
+                <div class="no-data-box">
+                    <div style="font-size: 50px; margin-bottom: 15px;">📭</div>
+                    <p>No reports yet. <a href="/upload">Upload your first report!</a></p>
+                </div>
+            <% } else { %>
+                <div class="recent-list">
+                    <% recentReports.forEach((report, index) => { %>
+                        <div class="recent-card">
+                            <div class="recent-card-left">
+                                <div class="recent-icon"><%= report.fileType === 'pdf' ? '📄' : '🖼️' %></div>
+                                <div>
+                                    <div class="recent-title">Report #<%= index + 1 %></div>
+                                    <div class="recent-date"><%= report.createdAt.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) %></div>
+                                </div>
+                            </div>
+                            <div class="recent-card-right">
+                                <span class="mode-badge <%= report.mode === 'simple' ? 'badge-green' : 'badge-blue' %>">
+                                    <%= report.mode === 'simple' ? '👤 Patient' : '🩺 Medical' %>
+                                </span>
+                                <% if (report.result.includes('status-green')) { %>
+                                    <span class="risk-badge badge-green">🟢 Normal</span>
+                                <% } else if (report.result.includes('status-yellow')) { %>
+                                    <span class="risk-badge badge-yellow">🟡 Monitor</span>
+                                <% } else if (report.result.includes('status-red')) { %>
+                                    <span class="risk-badge badge-red">🔴 Consult</span>
+                                <% } %>
+                            </div>
+                        </div>
+                    <% }) %>
+                </div>
+            <% } %>
+        </div>
+
+    </div>
+</section>
+
+<script>
+    // Activity Bar Chart
+    const activityCtx = document.getElementById('activityChart').getContext('2d');
+    new Chart(activityCtx, {
+        type: 'bar',
+        data: {
+            labels: <%- chartLabels %>,
+            datasets: [{
+                label: 'Reports Analyzed',
+                data: <%- chartData %>,
+                backgroundColor: 'rgba(37, 99, 235, 0.15)',
+                borderColor: '#2563eb',
+                borderWidth: 2,
+                borderRadius: 8,
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { stepSize: 1 },
+                    grid: { color: '#f1f5f9' }
+                },
+                x: { grid: { display: false } }
+            }
+        }
+    });
+
+    // Risk Doughnut Chart
+    <% if (totalReports > 0) { %>
+    const riskCtx = document.getElementById('riskChart').getContext('2d');
+    new Chart(riskCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Normal', 'Monitor', 'Consult Doctor'],
+            datasets: [{
+                data: [<%= greenCount %>, <%= yellowCount %>, <%= redCount %>],
+                backgroundColor: ['#10b981', '#f59e0b', '#ef4444'],
+                borderWidth: 0,
+                hoverOffset: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            cutout: '70%',
+            plugins: { legend: { display: false } }
+        }
+    });
+    <% } %>
+</script>
+
+<%- include("partials/footer") %>

@@ -172,4 +172,92 @@ router.get("/profile", ensureAuthenticated, async (req, res) => {
     }
 });
 
+router.get("/dashboard", ensureAuthenticated, async (req, res) => {
+    try {
+        const userId = req.user._id;
+
+        // Total reports
+        const totalReports = await Report.countDocuments({ user: userId });
+
+        // This month
+        const startOfMonth = new Date();
+        startOfMonth.setDate(1);
+        startOfMonth.setHours(0, 0, 0, 0);
+        const thisMonthReports = await Report.countDocuments({
+            user: userId,
+            createdAt: { $gte: startOfMonth }
+        });
+
+        // Mode counts
+        const simpleModeCount = await Report.countDocuments({ user: userId, mode: "simple" });
+        const proModeCount = await Report.countDocuments({ user: userId, mode: "professional" });
+
+        // Risk distribution — count green, yellow, red from result HTML
+        const allReports = await Report.find({ user: userId });
+        let greenCount = 0, yellowCount = 0, redCount = 0;
+        allReports.forEach(report => {
+            if (report.result.includes('status-green')) greenCount++;
+            else if (report.result.includes('status-yellow')) yellowCount++;
+            else if (report.result.includes('status-red')) redCount++;
+        });
+
+        // Last 6 months activity
+        const sixMonthsAgo = new Date();
+        sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+
+        const monthlyData = await Report.aggregate([
+            { $match: { user: userId, createdAt: { $gte: sixMonthsAgo } } },
+            {
+                $group: {
+                    _id: {
+                        year: { $year: "$createdAt" },
+                        month: { $month: "$createdAt" }
+                    },
+                    count: { $sum: 1 }
+                }
+            },
+            { $sort: { "_id.year": 1, "_id.month": 1 } }
+        ]);
+
+        // Format monthly data for chart
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        const chartLabels = [];
+        const chartData = [];
+
+        // Build last 6 months
+        for (let i = 5; i >= 0; i--) {
+            const d = new Date();
+            d.setMonth(d.getMonth() - i);
+            const month = d.getMonth() + 1;
+            const year = d.getFullYear();
+            chartLabels.push(monthNames[d.getMonth()]);
+            const found = monthlyData.find(m => m._id.month === month && m._id.year === year);
+            chartData.push(found ? found.count : 0);
+        }
+
+        // Recent 3 reports
+        const recentReports = await Report.find({ user: userId })
+            .sort({ createdAt: -1 })
+            .limit(3);
+
+        res.render("dashboard", {
+            user: req.user,
+            totalReports,
+            thisMonthReports,
+            simpleModeCount,
+            proModeCount,
+            greenCount,
+            yellowCount,
+            redCount,
+            chartLabels: JSON.stringify(chartLabels),
+            chartData: JSON.stringify(chartData),
+            recentReports
+        });
+
+    } catch (err) {
+        console.error("Dashboard Error:", err);
+        res.redirect("/");
+    }
+});
+
 module.exports = router;
