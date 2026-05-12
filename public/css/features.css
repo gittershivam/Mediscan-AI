@@ -170,7 +170,7 @@
 /* ================= DUAL MODE SECTION ================= */
 
 .dual-mode-section {
-    padding: 40px 8%;
+    padding: 40px 5%;
     text-align: center;
 }
 
@@ -264,7 +264,7 @@
 /* ================= CONSULTATION INDICATOR ================= */
 
 .consultation-section {
-    padding: 10px 4%;
+    padding: 40px 5%;
     background: #F7FCFB;
     text-align: center;
 }

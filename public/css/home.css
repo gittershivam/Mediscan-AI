@@ -1,4 +1,40 @@
 /* ================= GLOBAL ================= */
+/* ===== GLOBAL IMPROVEMENTS ===== */
+
+/* Smooth transitions everywhere */
+a, button {
+    transition: all 0.2s ease;
+}
+
+/* Better card shadows */
+.card, .step-card, .safety-card, .solution-card, .problem-card {
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+}
+
+.card:hover, .step-card:hover, .safety-card:hover {
+    box-shadow: 0 12px 35px rgba(0,0,0,0.1);
+}
+
+/* Section headings consistency */
+.section h2, .how-it-works h1 {
+    letter-spacing: -0.5px;
+}
+
+/* Better hero */
+.hero {
+    background: linear-gradient(135deg, #00BFA6 0%, #0097A7 50%, #006064 100%);
+}
+
+/* Navbar logo style improvement */
+.logo {
+    text-decoration: none;
+    font-size: 1.4rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #00BFA6, #2563eb);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
 
 html {
     scroll-behavior: smooth;
@@ -820,6 +856,52 @@ h1, h2, h3 {
 /* ================= MOBILE RESPONSIVE ================= */
 
 @media (max-width: 768px) {
+    /* Hero buttons fix */
+.hero-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.primary-btn, .secondary-btn {
+    width: 80%;
+    text-align: center;
+}
+
+/* Problem section */
+.problem-left h2 {
+    font-size: 1.8rem;
+}
+
+.problem-intro {
+    font-size: 0.95rem;
+}
+
+/* Solution section */
+.solution-right h2 {
+    font-size: 1.8rem;
+}
+
+/* How it works */
+.how-it-works h1 {
+    font-size: 2rem;
+}
+
+.how-sub {
+    font-size: 1rem;
+}
+
+/* Bottom line */
+.bottom-line {
+    font-size: 1.1rem;
+    margin-top: 40px;
+}
+
+/* CTA section */
+.cta-section h2 {
+    font-size: 1.6rem;
+}
 
     /* Navbar */
     .navbar {
