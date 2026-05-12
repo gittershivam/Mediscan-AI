@@ -26,6 +26,29 @@
                                 <div class="success-check" id="successCheck">✓ File Uploaded Successfully</div>
                             </div>
                         </div>
+                        <!-- Camera Button (Mobile Only) -->
+<div id="cameraBtn" style="display:none; margin-bottom: 20px;">
+    <button onclick="document.getElementById('fileInput').click()" style="
+        width: 100%;
+        padding: 16px;
+        background: linear-gradient(135deg, #00BFA6, #2563eb);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    ">
+        📸 Take Photo of Report
+    </button>
+    <p style="text-align:center; color:#9ca3af; font-size:13px; margin-top:8px;">
+        Or tap the box above to choose from gallery
+    </p>
+</div>
 
                         <div id="analysisSection" style="display:none; margin-top:20px;">
                             <h3>Choose Explanation Mode</h3>
@@ -157,6 +180,18 @@
             // Chat State
             let chatHistory = [];
             let reportContext = "";
+
+            function isMobile() {
+                return /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent);
+            }
+
+            if (isMobile()) {
+    document.getElementById('cameraBtn').style.display = 'block';
+    fileInput.setAttribute('capture', 'environment');
+    document.querySelector('.upload-icon').textContent = '📸';
+    document.querySelector( '.upload-box p').innerHTML = '<strong>Tap to choose from gallery</strong>';
+    document.querySelector('.upload-box span').textContent = 'JPG, PNG (Max 5MB)';
+}
             // --- 1. Upload Logic ---
             uploadBox.addEventListener('click', () => fileInput.click());
 
@@ -259,7 +294,7 @@
                 formData.append("mode", mode);
 
                 loading.style.display = "block";
-                startLoadingAnimation(); 
+                startLoadingAnimation();
                 output.innerHTML = "";
                 actionButtons.style.display = "none";
                 translationSection.style.display = "none";
@@ -544,6 +579,8 @@
                 if (e.key === 'Enter') sendChatMessage();
             });
 
+            // ===== SMART CAMERA / FILE PICKER =====
+            
             // Show chat section after analysis and store report context
             // Find your existing line: actionButtons.style.display = "flex";
             // Add these two lines RIGHT AFTER it:
