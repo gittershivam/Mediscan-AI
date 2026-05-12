@@ -35,7 +35,38 @@
 
                             <div id="loading" style="display:none; margin-top:15px;">
                                 <div class="spinner"></div>
-                                Analyzing report... ⏳
+                                <div id="loadingText"
+                                    style="font-weight: 600; color: #374151; margin-top: 10px; font-size: 15px; transition: all 0.3s ease;">
+                                    Uploading your report...
+                                </div>
+                                <div
+                                    style="margin-top: 15px; background: #f1f5f9; border-radius: 10px; height: 6px; overflow: hidden;">
+                                    <div id="progressBar"
+                                        style="height: 100%; width: 0%; background: linear-gradient(90deg, #2563eb, #00BFA6); border-radius: 10px; transition: width 0.6s ease;">
+                                    </div>
+                                </div>
+                                <div id="loadingSteps" style="margin-top: 15px; text-align: left;">
+                                    <div class="load-step" id="step1"
+                                        style="padding: 8px 12px; border-radius: 8px; margin-bottom: 6px; font-size: 13px; color: #6b7280; display: flex; align-items: center; gap: 8px;">
+                                        <span class="step-icon">⏳</span> Uploading your report...
+                                    </div>
+                                    <div class="load-step" id="step2"
+                                        style="padding: 8px 12px; border-radius: 8px; margin-bottom: 6px; font-size: 13px; color: #6b7280; display: flex; align-items: center; gap: 8px;">
+                                        <span class="step-icon">⏳</span> Extracting content...
+                                    </div>
+                                    <div class="load-step" id="step3"
+                                        style="padding: 8px 12px; border-radius: 8px; margin-bottom: 6px; font-size: 13px; color: #6b7280; display: flex; align-items: center; gap: 8px;">
+                                        <span class="step-icon">⏳</span> Analyzing medical values...
+                                    </div>
+                                    <div class="load-step" id="step4"
+                                        style="padding: 8px 12px; border-radius: 8px; margin-bottom: 6px; font-size: 13px; color: #6b7280; display: flex; align-items: center; gap: 8px;">
+                                        <span class="step-icon">⏳</span> Generating insights...
+                                    </div>
+                                    <div class="load-step" id="step5"
+                                        style="padding: 8px 12px; border-radius: 8px; margin-bottom: 6px; font-size: 13px; color: #6b7280; display: flex; align-items: center; gap: 8px;">
+                                        <span class="step-icon">⏳</span> Almost done...
+                                    </div>
+                                </div>
                             </div>
 
                             <div id="output" style="margin-top: 20px;"></div>
@@ -144,6 +175,71 @@
                 }
             });
 
+            // ===== LOADING STEPS ANIMATION =====
+            let loadingInterval;
+
+            function startLoadingAnimation() {
+                const steps = [
+                    { id: 'step1', text: '📤 Uploading your report...', progress: 20 },
+                    { id: 'step2', text: '📄 Extracting content...', progress: 40 },
+                    { id: 'step3', text: '🔍 Analyzing medical values...', progress: 60 },
+                    { id: 'step4', text: '🤖 Generating AI insights...', progress: 80 },
+                    { id: 'step5', text: '✅ Almost done...', progress: 95 }
+                ];
+
+                let currentStep = 0;
+
+                // Reset all steps
+                steps.forEach(s => {
+                    const el = document.getElementById(s.id);
+                    el.style.background = 'transparent';
+                    el.style.color = '#6b7280';
+                    el.querySelector('.step-icon').textContent = '⏳';
+                });
+
+                document.getElementById('progressBar').style.width = '0%';
+
+                loadingInterval = setInterval(() => {
+                    if (currentStep < steps.length) {
+                        const step = steps[currentStep];
+                        const el = document.getElementById(step.id);
+
+                        // Mark previous step as done
+                        if (currentStep > 0) {
+                            const prevEl = document.getElementById(steps[currentStep - 1].id);
+                            prevEl.style.background = '#ecfdf5';
+                            prevEl.style.color = '#059669';
+                            prevEl.querySelector('.step-icon').textContent = '✅';
+                        }
+
+                        // Highlight current step
+                        el.style.background = '#eff6ff';
+                        el.style.color = '#2563eb';
+                        el.querySelector('.step-icon').textContent = '🔄';
+
+                        // Update progress bar
+                        document.getElementById('progressBar').style.width = step.progress + '%';
+
+                        currentStep++;
+                    }
+                }, 1500);
+            }
+
+            function stopLoadingAnimation() {
+                clearInterval(loadingInterval);
+
+                // Mark all steps done
+                for (let i = 1; i <= 5; i++) {
+                    const el = document.getElementById(`step${i}`);
+                    el.style.background = '#ecfdf5';
+                    el.style.color = '#059669';
+                    el.querySelector('.step-icon').textContent = '✅';
+                }
+
+                // Complete progress bar
+                document.getElementById('progressBar').style.width = '100%';
+            }
+
             // --- 2. Analysis Logic ---
             simpleBtn.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -163,6 +259,7 @@
                 formData.append("mode", mode);
 
                 loading.style.display = "block";
+                startLoadingAnimation(); 
                 output.innerHTML = "";
                 actionButtons.style.display = "none";
                 translationSection.style.display = "none";
@@ -180,6 +277,8 @@
                     });
 
                     const data = await response.json();
+
+                    stopLoadingAnimation();
                     loading.style.display = "none";
 
                     if (data.success) {
