@@ -132,5 +132,44 @@ router.get("/history", ensureAuthenticated, async (req, res) => {
     }
 });
 
+router.get("/profile", ensureAuthenticated, async (req, res) => {
+    try {
+        const totalReports = await Report.countDocuments({ user: req.session.userId || req.user._id });
+        
+        // Reports this month
+        const startOfMonth = new Date();
+        startOfMonth.setDate(1);
+        startOfMonth.setHours(0, 0, 0, 0);
+        
+        const thisMonthReports = await Report.countDocuments({
+            user: req.session.userId || req.user._id,
+            createdAt: { $gte: startOfMonth }
+        });
+
+        // Most used mode
+        const simpleModeCount = await Report.countDocuments({ 
+            user: req.session.userId || req.user._id, 
+            mode: "simple" 
+        });
+        const proModeCount = await Report.countDocuments({ 
+            user: req.session.userId || req.user._id, 
+            mode: "professional" 
+        });
+        const mostUsedMode = simpleModeCount >= proModeCount ? "Patient Mode" : "Medical Mode";
+
+        res.render("profile", {
+            user: req.user,
+            totalReports,
+            thisMonthReports,
+            mostUsedMode,
+            simpleModeCount,
+            proModeCount
+        });
+
+    } catch (err) {
+        console.error("Profile Error:", err);
+        res.redirect("/");
+    }
+});
 
 module.exports = router;

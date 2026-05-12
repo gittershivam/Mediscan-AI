@@ -25,6 +25,21 @@ mongoose.connect(process.env.MONGO_URI)
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ limit: "10mb" }));
 
+app.use(async (req, res, next) => {
+    if (req.session && req.session.userId) {
+        try {
+            const User = require("./models/User");
+            const user = await User.findById(req.session.userId);
+            res.locals.user = user;
+        } catch (err) {
+            res.locals.user = null;
+        }
+    } else {
+        res.locals.user = null;
+    }
+    next();
+});
+
 // ===== SESSION =====
 app.set('trust proxy', 1);
 

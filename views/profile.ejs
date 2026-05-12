@@ -1,0 +1,86 @@
+<%- include("partials/header") %>
+<%- include("partials/navbar") %>
+
+<section class="profile-page">
+    <div class="profile-container">
+
+        <!-- Profile Hero -->
+        <div class="profile-hero">
+            <div class="profile-hero-circle1"></div>
+            <div class="profile-hero-circle2"></div>
+            <div class="profile-hero-content">
+                <div class="profile-avatar">
+                    <%= user.name.charAt(0).toUpperCase() %>
+                </div>
+                <div>
+                    <h1 class="profile-name"><%= user.name %></h1>
+                    <p class="profile-email">✉️ <%= user.email %></p>
+                    <p class="profile-since">🗓️ Member since <%= user.createdAt.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' }) %></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number blue"><%= totalReports %></div>
+                <div class="stat-label">Total Reports Analyzed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number teal"><%= thisMonthReports %></div>
+                <div class="stat-label">Reports This Month</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number purple"><%= mostUsedMode %></div>
+                <div class="stat-label">Preferred Mode</div>
+            </div>
+        </div>
+
+        <!-- Mode Breakdown -->
+        <div class="breakdown-card">
+            <h3>📊 Analysis Mode Breakdown</h3>
+
+            <div class="mode-bar-row">
+                <div class="mode-bar-label">
+                    <span>👤 Patient Mode (Simple)</span>
+                    <span class="mode-count-green"><%= simpleModeCount %> reports</span>
+                </div>
+                <div class="bar-track">
+                    <div class="bar-fill green" style="width: <%= totalReports > 0 ? (simpleModeCount / totalReports * 100) : 0 %>%;"></div>
+                </div>
+            </div>
+
+            <div class="mode-bar-row">
+                <div class="mode-bar-label">
+                    <span>🩺 Medical Mode (Professional)</span>
+                    <span class="mode-count-blue"><%= proModeCount %> reports</span>
+                </div>
+                <div class="bar-track">
+                    <div class="bar-fill blue" style="width: <%= totalReports > 0 ? (proModeCount / totalReports * 100) : 0 %>%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="actions-grid">
+            <a href="/upload" class="action-card">
+                <div class="action-icon">📤</div>
+                <div class="action-title">New Analysis</div>
+                <div class="action-subtitle">Upload a report</div>
+            </a>
+            <a href="/history" class="action-card">
+                <div class="action-icon">📋</div>
+                <div class="action-title">View History</div>
+                <div class="action-subtitle">Past reports</div>
+            </a>
+            <a href="/auth/logout" class="action-card">
+                <div class="action-icon">🚪</div>
+                <div class="action-title red">Logout</div>
+                <div class="action-subtitle">Sign out safely</div>
+            </a>
+        </div>
+
+    </div>
+</section>
+
+<%- include("partials/footer") %>
